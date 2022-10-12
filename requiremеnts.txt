@@ -1,0 +1,4 @@
+vk_service_id=
+ya_token=
+default_id=1
+default_count_photo=5
