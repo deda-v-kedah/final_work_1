@@ -1,7 +1,7 @@
 import json
 from pprint import pprint
 import requests
-
+import datetime
 
 def read_line(atrib):
     with open('token.txt', 'rt', encoding='utf-8' ) as file:
@@ -69,14 +69,17 @@ class YaUploader:
         params = {"path": self.path}
         res = requests.put(url=url, headers=headers, params=params)
 
+        # return res.status_code
         if res.status_code <= 201:
             print(f"Директория \"{self.path}\" успешно создона")
-            return 'ok'
+            # return res.status_code
         elif res.status_code == 409:
             print(f"Папка \"{self.path}\" уже существует")
-            return 'ok'
+            # return res.status_code
         else:
             print(f"Ошибка \"{res.json()['message']}\"")
+        
+        return res.status_code
 
 
     def upload_photos(self, photo_name, photo_url):
@@ -130,12 +133,12 @@ def vk_json_processing():
 
            
 
-vk_id = input("Введите id: ")
-vk_id=read_line('default_id') if vk_id=='' else vk_id
+# vk_id = input("Введите id: ")
+vk_id = read_line('default_id') # if vk_id=='' else vk_id
 
 
-token = str(input("Введите токен Ya.Диск: "))
-token = read_line('ya_token') if token=='' else token
+# token = str(input("Введите токен Ya.Диск: "))
+token = read_line('ya_token') # if token=='' else token
 
 
 get_vk = Get_vk(read_line('vk_service_id'), vk_id)
@@ -154,10 +157,10 @@ if uploader.connect_check() == 'ok':
         data = []
 
         res = uploader.create_folder()
-        if res == 'ok':
+        if res == 201 or res == 409:
             for photo in range(0, int(count_photo)):
                 uploader.upload_photos(photos['files'][photo]['param']['file_name']+'.jpeg', photos['files'][photo]['url'])
-                data.append(photos['files'][photo]['param'])    
+                data.append(photos['files'][photo]['param']) 
         create_json(data, 'files.json')    
         print("Завершено")
 else:
